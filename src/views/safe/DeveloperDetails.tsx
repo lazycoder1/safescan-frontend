@@ -7,7 +7,7 @@ import Caption from '@/components/common/Caption';
 import { getFee } from '@/components/common/utils';
 import React, { useState, useEffect } from 'react';
 import Skeleton from 'react-loading-skeleton-2';
-import { BUTTON_LIST } from './SafeTransaction';
+import { BUTTON_LIST } from './UserOperation';
 import sx from './usertable.module.sass';
 import LinkAndCopy from '@/components/common/LinkAndCopy';
 import { NETWORK_SCANNER_MAP } from '@/components/common/constants';
