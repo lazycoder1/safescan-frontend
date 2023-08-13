@@ -33,7 +33,7 @@ function Navbar(props: NavbarProps) {
 
     return (
         <Fragment>
-            {!closeBanner && <div className="relative isolate flex items-center gap-x-6 overflow-hidden bg-dark-600 px-6 py-2.5 sm:px-3.5 sm:before:flex-1" >
+            {/* {!closeBanner && <div className="relative isolate flex items-center gap-x-6 overflow-hidden bg-dark-600 px-6 py-2.5 sm:px-3.5 sm:before:flex-1" >
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                     <p className="text-sm leading-6 text-white">
                         4 Years of Fuse Network! Congratulations 🎉🥳 
@@ -45,14 +45,14 @@ function Navbar(props: NavbarProps) {
                         <CloseIcon className="w-5 h-5" aria-hidden="true" />
                     </button>
                 </div>
-            </div>}
+            </div>} */}
             <nav className="py-3 px-[16px]">
                 <div className="container flex items-center justify-between gap-8 px-0">
                     <div className="">
                         <Logo />
                     </div>
                     <div className="w-[1px] h-[40px] hidden md:block bg-black/[12%]" />
-                    <div className="hidden md:block">
+                    {/* <div className="hidden md:block">
                         <Pages />
                     </div>
                     <div className="items-center justify-end flex-grow hidden gap-3 md:flex">
@@ -63,10 +63,10 @@ function Navbar(props: NavbarProps) {
                         <button type="button" onClick={toggleDrawer}>
                             <img src="/images/menu.svg" alt="" />
                         </button>
-                    </div>
+                    </div> */}
                 </div>
             </nav>
-            <Drawer open={isOpen} onClose={toggleDrawer} direction="left" className="">
+            {/* <Drawer open={isOpen} onClose={toggleDrawer} direction="left" className="">
                 <nav className="flex" aria-label="Breadcrumb">
                     <ol role="list" className="flex items-center space-x-4">
                         <li>
@@ -100,7 +100,7 @@ function Navbar(props: NavbarProps) {
                         <Donations />
                     </div>
                 </div>
-            </Drawer>
+            </Drawer> */}
         </Fragment>
     );
 }

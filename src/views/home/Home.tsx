@@ -18,101 +18,77 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import InfoButton from '@/components/common/InfoButton';
 import Header from '@/components/common/Header';
+import {
+    getLatestMultiSigTransactions,
+    getLatestModuleTransactions,
+    MultiSigTransaction,
+    moduleTransaction,
+} from '@/components/common/apiCalls/safeScanApis';
 
 function Home() {
-    const { selectedNetwork, setSelectedNetwork } = useConfig();
-    const [bundlesTable, setBundlesTable] = useState<tableDataT>(BundlesTable as tableDataT);
-    const [operationsTable, setOperationsTable] = useState<tableDataT>(OperationsTable as tableDataT);
-    const [bundlersTable, setBundlersTable] = useState<tableDataT>(BundlersTable as tableDataT);
-    const [paymastersTable, setPaymastersTable] = useState<tableDataT>(PaymastersTable as tableDataT);
-    const [userOpTableLoading, setUserOpTableLoading] = useState(true);
-    const [bundleTableLoading, setBundleTableLoading] = useState(true);
-    const [bundlerTableLoading, setBundlerTableLoading] = useState(true);
-    const [paymasterTableLoading, setPaymasterTableLoading] = useState(true);
+    // const { selectedNetwork, setSelectedNetwork } = useConfig();
+    const [selectedNetwork, setSelectedNetwork] = useState('matic');
+    const [safeMultiSigTable, setSafeMultiSigTable] = useState<tableDataT>({} as tableDataT);
+    const [safeModuleTable, setSafeModuleTable] = useState<tableDataT>({} as tableDataT);
+    const [safeModuleLoading, setSafeModuleLoading] = useState(true);
+    const [safeMultiSigLoading, setSafeMultiSigLoading] = useState(true);
+
+    // const [bundlesTable, setBundlesTable] = useState<tableDataT>(BundlesTable as tableDataT);
+    // const [operationsTable, setOperationsTable] = useState<tableDataT>(OperationsTable as tableDataT);
+    // const [bundlersTable, setBundlersTable] = useState<tableDataT>(BundlersTable as tableDataT);
+    // const [paymastersTable, setPaymastersTable] = useState<tableDataT>(PaymastersTable as tableDataT);
+    // const [userOpTableLoading, setUserOpTableLoading] = useState(true);
+    // const [bundleTableLoading, setBundleTableLoading] = useState(true);
+    // const [bundlerTableLoading, setBundlerTableLoading] = useState(true);
+    // const [paymasterTableLoading, setPaymasterTableLoading] = useState(true);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
-        refreshBundlesTable(selectedNetwork);
-        refreshUserOpsTable(selectedNetwork);
-        refreshBundlersTable(selectedNetwork);
-        refreshPaymastersTable(selectedNetwork);
+        // refreshBundlesTable(selectedNetwork);
+        // refreshUserOpsTable(selectedNetwork);
+        // refreshBundlersTable(selectedNetwork);
+        // refreshPaymastersTable(selectedNetwork);
+        refreshSafeMultiSigTransactions(selectedNetwork);
+        refreshSafeModuleTransactions(selectedNetwork);
     }, [selectedNetwork]);
 
-    const refreshBundlesTable = async (network: string) => {
-        setBundleTableLoading(true);
-        const bundles = await getLatestBundles(network, 5, 0, toast);
-        let newRows = [] as tableDataT['rows'];
-        bundles.forEach((bundle) => {
-            newRows.push({
+    const refreshSafeMultiSigTransactions = async (network: string) => {
+        const latestMultiSigTransactions = await getLatestMultiSigTransactions();
+        let newRow = [] as tableDataT['rows'];
+        latestMultiSigTransactions.forEach((tx: MultiSigTransaction) => {
+            newRow.push({
                 token: {
-                    text: bundle.transactionHash,
+                    text: tx.safeTxHash,
                     icon: NETWORK_ICON_MAP[network],
-                    type: 'bundle',
+                    type: 'safeMultiSig',
                 },
-                ago: getTimePassed(bundle.blockTime),
-                userOps: bundle.userOpsLength + ' ops',
+                ago: getTimePassed(tx.blockTimestamp),
+                sender: tx.from,
+                target: [tx.to],
                 status: true,
             });
         });
-        setBundlesTable({ ...bundlesTable, rows: newRows.slice(0, 5) });
-        setBundleTableLoading(false);
+        setSafeMultiSigTable({ ...safeMultiSigTable, rows: newRow.slice(0, 10) });
+        setSafeMultiSigLoading(false);
     };
 
-    const refreshPaymastersTable = async (network: string) => {
-        const paymasters = await getTopPaymasters(network, 5, 0, toast);
-        let newRows: tableDataT['rows'] = [];
-        paymasters.forEach((paymaster) => {
-            newRows.push({
+    const refreshSafeModuleTransactions = async (network: string) => {
+        const latestModuleTransactions = await getLatestModuleTransactions();
+        let newRow = [] as tableDataT['rows'];
+        latestModuleTransactions.forEach((tx: moduleTransaction) => {
+            newRow.push({
                 token: {
-                    text: paymaster.address,
+                    text: tx.transactionHash,
                     icon: NETWORK_ICON_MAP[network],
-                    type: 'paymaster',
+                    type: 'blank',
                 },
-                userOps: `${paymaster.userOpsLength} ops`,
-                fee: getFee(parseInt(paymaster.gasSponsored), network),
+                ago: getTimePassed(tx.blockTimestamp),
+                sender: tx.from,
+                target: [tx.to],
+                status: true,
             });
         });
-        setPaymastersTable({ ...paymastersTable, rows: newRows.slice(0, 10) });
-        setPaymasterTableLoading(false);
-    };
-
-    const refreshBundlersTable = async (network: string) => {
-        const bundlers = await getTopBundlers(network, 5, 0, toast);
-        let newRows: tableDataT['rows'] = [];
-        bundlers.forEach((bundler) => {
-            newRows.push({
-                token: {
-                    text: bundler.address,
-                    icon: NETWORK_ICON_MAP[network],
-                    type: 'bundler',
-                },
-                userOps: `${bundler.bundleLength} bundles`,
-                fee: getFee(parseInt(bundler.actualGasCostSum), network),
-            });
-        });
-        console.log(newRows);
-        setBundlersTable({ ...bundlersTable, rows: newRows });
-        setBundlerTableLoading(false);
-    };
-
-    const refreshUserOpsTable = async (network: string) => {
-        setUserOpTableLoading(true);
-        const userOps = await getLatestUserOps(network, 5, 0, toast);
-        let newRows = [] as tableDataT['rows'];
-        userOps.forEach((userOp) => {
-            newRows.push({
-                token: {
-                    text: userOp.userOpHash,
-                    icon: NETWORK_ICON_MAP[network],
-                    type: 'userOp',
-                },
-                ago: getTimePassed(userOp.blockTime!),
-                sender: userOp.sender,
-                target: userOp.target!,
-                status: userOp.success!,
-            });
-        });
-        setOperationsTable({ ...operationsTable, rows: newRows.slice(0, 5) });
-        setUserOpTableLoading(false);
+        setSafeModuleTable({ ...safeModuleTable, rows: newRow.slice(0, 10) });
+        setSafeModuleLoading(false);
     };
 
     return (
@@ -121,10 +97,11 @@ function Home() {
             <section className="py-6">
                 <div className="container">
                     <h1 className="mb-2 text-xl font-bold leading-8 md:text-3xl md:mb-4">
-                        UserOp Explorer for{' '}
-                        <a href="https://eips.ethereum.org/EIPS/eip-4337" target="_blank" style={{ textDecoration: 'underline' }}>
-                            4337
-                        </a>
+                        The best{' '}
+                        <a href="https://app.safe.global/home" target="_blank" style={{ textDecoration: 'underline' }}>
+                            safe
+                        </a>{' '}
+                        explorer 🚀
                     </h1>
                     <div>
                         <Searchblock isNavbar={false} />
@@ -133,18 +110,45 @@ function Home() {
             </section>
             <div className="container">
                 <div className="flex flex-wrap items-center justify-between gap-3 py-2 mb-4 md:gap-10">
-                    {selectedNetwork != 'matic' && (
-                        <Header
-                            icon="/images/cube-unfolded.svg"
-                            headerText="Recent Metrics"
-                            infoText="Latest Activity from entrypoint, and smart contract wallets"
-                        />
-                    )}
-                    <NetworkSelector selectedNetwork={selectedNetwork} handleNetworkChange={setSelectedNetwork} disabled={loading} />
+                    
+                    {/* <NetworkSelector selectedNetwork={selectedNetwork} handleNetworkChange={setSelectedNetwork} disabled={loading} /> */}
                 </div>
             </div>
-            {selectedNetwork != 'matic' && <RecentMetrics selectedNetwork={selectedNetwork} setLoading={setLoading} loading={loading} />}
+            {/* {selectedNetwork != 'matic' && <RecentMetrics selectedNetwork={selectedNetwork} setLoading={setLoading} loading={loading} />} */}
             <section className="mb-12">
+                <div className="container grid grid-cols-1 gap-10 md:grid-cols-2">
+                    <div>
+                        <Table
+                            {...(safeMultiSigTable as tableDataT)}
+                            loading={safeMultiSigLoading}
+                            caption={{
+                                children: 'Recent Safe MultiSig',
+                                icon: '/images/cube-unfolded.svg',
+                                text: 'Recent Safe MultiSig Processed by selected chain',
+                            }}
+                        />
+                        {/* <div className="mt-4">
+                            <Button href="/recentBundles">View all Safe MultiSig Transaction</Button>
+                        </div> */}
+                    </div>
+                    <div>
+                        <Table
+                            {...(safeModuleTable as tableDataT)}
+                            loading={safeModuleLoading}
+                            caption={{
+                                children: 'Recent Safe Modules',
+                                icon: '/images/cube-unfolded.svg',
+                                text: 'Recent Safe Modules Processed by selected chain',
+                            }}
+                        />
+
+                        {/* <div className="mt-4">
+                            <Button href="/recentBundles">View all Safe Module Transaction</Button>
+                        </div> */}
+                    </div>
+                </div>
+            </section>
+            {/* <section className="mb-12">
                 <div className="container grid grid-cols-1 gap-10 md:grid-cols-2">
                     <div>
                         <Table
@@ -209,9 +213,9 @@ function Home() {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> */}
             <ToastContainer />
-            <Footer />
+            {/* <Footer /> */}
         </div>
     );
 }

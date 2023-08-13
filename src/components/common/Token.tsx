@@ -73,6 +73,11 @@ function getHrefLink(type: string | undefined, text: string, network: string) {
             pathname: `/paymaster/${text}`,
             query: { network: network },
         };
+    } else if (type == 'safeMultiSig') {
+        return {
+            pathname: `/safeMultiSig/${text}`,
+            query: { network: network },
+        }
     } else if (type == "erc20Transfer" || type == "erc721Transfer" || type == "transaction" ) {
         return {
             pathname: NETWORK_SCANNER_MAP[network]+`/tx/${text}`,
