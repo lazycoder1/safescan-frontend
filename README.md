@@ -1,21 +1,6 @@
-# Contributing to Jiffyscan
+# Public link 
 
-Welcome to Jiffyscan! We are excited to have you contribute to our open-source project. We welcome all types of contributions, from bug fixes to new features. This document will guide you through the process of contributing to our project.
-Getting Started
-
-Before you start contributing, make sure you have the latest version of the code from our repository. You can clone our repository using the following command:
-
-bash
-
-`git clone https://github.com/jiffy-labs/jiffyscan-frontend.git`
-
-and switch to the branch `ui-work`
-
-`git switch ui-work && git pull`
-
-Once you have the code, you can install the dependencies by running:
-
-`npm install`
+## https://safescan-frontend.vercel.app
 
 ## Getting Started
 
