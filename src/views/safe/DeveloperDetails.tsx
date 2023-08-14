@@ -7,7 +7,7 @@ import Caption from '@/components/common/Caption';
 import { getFee } from '@/components/common/utils';
 import React, { useState, useEffect } from 'react';
 import Skeleton from 'react-loading-skeleton-2';
-import { BUTTON_LIST } from './UserOperation';
+// import { BUTTON_LIST } from './UserOperation';
 import sx from './usertable.module.sass';
 import LinkAndCopy from '@/components/common/LinkAndCopy';
 import { NETWORK_SCANNER_MAP } from '@/components/common/constants';
@@ -130,7 +130,7 @@ export default function DeveloperDetails({
                                                             <div className="py-[14px] flex px-4 whitespace-pre">
                                                                 <div className="flex items-center justify-between w-full my-[2px] mb-2">
                                                                     <div className="flex gap-1">
-                                                                        {BUTTON_LIST.map(({ name, key }, index) => (
+                                                                        {/* {BUTTON_LIST.map(({ name, key }, index) => (
                                                                             <Chip
                                                                                 className={`
                                     text-white table-tab py-[6px] px-3 ${sx.tab}`}
@@ -143,7 +143,7 @@ export default function DeveloperDetails({
                                                                             >
                                                                                 {name}
                                                                             </Chip>
-                                                                        ))}
+                                                                        ))} */}
                                                                     </div>
                                                                     <div className="flex-end">
                                                                         <CopyButton text={item?.input!} />
@@ -167,7 +167,7 @@ export default function DeveloperDetails({
                                                     <div className="py-[14px] px-4 ">
                                                         <div className="flex my-[2px] justify-between mb-2">
                                                             <div className="flex gap-1">
-                                                                {BUTTON_LIST.map(({ name, key }, index) => (
+                                                                {/* {BUTTON_LIST.map(({ name, key }, index) => (
                                                                     <Chip
                                                                         className={`
                                         text-white table-tab py-[6px] px-3 ${sx.tab}`}
@@ -177,7 +177,7 @@ export default function DeveloperDetails({
                                                                     >
                                                                         {name}
                                                                     </Chip>
-                                                                ))}
+                                                                ))} */}
                                                             </div>
                                                             <div className="flex-end">
                                                                 <CopyButton text={item?.input!} />
