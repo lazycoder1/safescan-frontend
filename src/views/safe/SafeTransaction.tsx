@@ -179,9 +179,6 @@ function RecentUserOps(props: any) {
                             <Link underline="hover" color="inherit" href={'/' + (selectedNetwork ? '?network=' + selectedNetwork : '')}>
                                 Home
                             </Link>
-                            <Link underline="hover" color="inherit" href="/">
-                                Recent Multi Sig Txns
-                            </Link>
                             <Link
                                 underline="hover"
                                 color="text.primary"
