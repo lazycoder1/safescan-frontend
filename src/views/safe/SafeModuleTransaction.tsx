@@ -35,18 +35,18 @@ const passedTime = (time: number) => {
     return passedTime;
 }
 
-async function returnUserOpData(hash: string, toast: any) {
+async function returnModuleTransaction(hash: string, network: string, toast: any) {
     let currentTime = (new Date()).getTime();
-    let userOp = await getUserOp(hash, toast);
-    while (userOp.length === 0) {
+    let safeModuleTxn = await getSafeModuleTransaction(hash, network)
+    while (Object.keys(safeModuleTxn ? safeModuleTxn : {}).length === 0) {
         await sleep(1000);
-        userOp = await getUserOp(hash, toast);
+        safeModuleTxn = await getSafeModuleTransaction(hash, network)
         if (passedTime(currentTime) > 10000) {
             showToast(toast, 'Error fetching data');
             break;
         }
     }
-    return userOp;
+    return safeModuleTxn;
 }
 
 // import Skeleton from '@/components/Skeleton';
@@ -108,9 +108,7 @@ function RecentUserOps(props: any) {
     const [safeModuleTransactionData, setSafeModuleTransactionData] = useState<safeModuleTransaction>({} as safeModuleTransaction);
 
     const refreshSafeTable = async (hash: string) => {
-        const safeModuleRes = await getSafeModuleTransaction(hash, 'polygon')
-        console.log("setiing", safeModuleRes);
-        console.log("setting 1", safeModuleRes? safeModuleRes : {} as safeModuleTransaction)
+        const safeModuleRes = await returnModuleTransaction(hash, network, toast);
         setSafeModuleTransactionData(safeModuleRes? safeModuleRes : {} as safeModuleTransaction);
         setTableLoading(false);
     };

@@ -35,18 +35,18 @@ const passedTime = (time: number) => {
     return passedTime;
 }
 
-async function returnUserOpData(hash: string, toast: any) {
+async function returnTransactionData(hash: string, network: string, toast: any) {
     let currentTime = (new Date()).getTime();
-    let userOp = await getUserOp(hash, toast);
-    while (userOp.length === 0) {
+    let txData = await getMultiSigTransaction(hash, network)
+    while (Object.keys(txData).length == 0) {
         await sleep(1000);
-        userOp = await getUserOp(hash, toast);
+        txData = await getMultiSigTransaction(hash, network)
         if (passedTime(currentTime) > 10000) {
             showToast(toast, 'Error fetching data');
             break;
         }
     }
-    return userOp;
+    return txData;
 }
 
 // import Skeleton from '@/components/Skeleton';
@@ -108,7 +108,7 @@ function RecentUserOps(props: any) {
     const [safeTransactionData, setSafeTransactionData] = useState<any>({});
 
     const refreshSafeTable = async (hash: string) => {
-        setSafeTransactionData(await getMultiSigTransaction(hash, 'polygon'));
+        setSafeTransactionData(await returnTransactionData(hash, 'polygon', toast));
         
         setTableLoading(false);
         
