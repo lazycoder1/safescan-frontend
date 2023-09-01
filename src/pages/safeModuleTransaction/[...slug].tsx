@@ -3,7 +3,7 @@ import { fallBack } from '@/components/common/constants';
 import { getNetworkParam } from '@/components/common/utils';
 import Layout from '@/components/global/Layout';
 import { useConfig } from '@/context/config';
-import Safe from '@/views/safe/SafeMofuleTransaction';
+import Safe from '@/views/safe/SafeModuleTransaction';
 import { useRouter } from 'next/router';
 import React, { ReactElement, useEffect } from 'react';
 import ReactGA from 'react-ga4';
