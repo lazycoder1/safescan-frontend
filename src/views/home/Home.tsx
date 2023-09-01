@@ -79,7 +79,7 @@ function Home() {
                 token: {
                     text: tx.transactionHash,
                     icon: NETWORK_ICON_MAP[network],
-                    type: 'blank',
+                    type: 'safeModuleTransaction',
                 },
                 ago: getTimePassed(tx.blockTimestamp),
                 sender: tx.from,

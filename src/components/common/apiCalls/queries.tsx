@@ -40,3 +40,18 @@ query MyQuery {
     }
   }
 `;
+
+export const GET_MODULE_TRANSACTIONS = `
+  query MyQuery($transactionHash: String) {
+    safeModuleTransactions(
+      first: 1
+      where: {transactionHash: $transactionHash}
+    ) {
+      value
+      from 
+      to
+      transactionHash
+      blockNumber
+    }
+  }
+`

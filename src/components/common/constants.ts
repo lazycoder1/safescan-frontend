@@ -142,6 +142,7 @@ export const NETWORK_SCANNER_MAP: { [key: string]: string } = {
     sepolia: 'https://sepolia.etherscan.io',
     mumbai: 'https://mumbai.polygonscan.com',
     matic: 'https://polygonscan.com',
+    polygon: 'https://polygonscan.com',
     'optimism-goerli': 'https://goerli-optimism.etherscan.io',
     'arbitrum-one': 'https://arbiscan.io',
     'arbitrum-goerli': 'https://goerli.arbiscan.io',
