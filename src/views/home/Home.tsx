@@ -27,26 +27,24 @@ import {
 
 function Home() {
     // const { selectedNetwork, setSelectedNetwork } = useConfig();
-    const [selectedNetwork, setSelectedNetwork] = useState('matic');
-    const [safeMultiSigTable, setSafeMultiSigTable] = useState<tableDataT>({} as tableDataT);
-    const [safeModuleTable, setSafeModuleTable] = useState<tableDataT>({} as tableDataT);
+    const [selectedNetwork, setSelectedNetwork] = useState('polygon');
+    const [safeMultiSigTable, setSafeMultiSigTable] = useState<tableDataT>({"columns": [
+        { "name": "Transaction Hash", "sort": true },
+        { "name": "Age", "sort": true },
+        { "name": "Safe", "sort": false },
+        { "name": "Target", "sort": false }
+    ]} as tableDataT);
+    const [safeModuleTable, setSafeModuleTable] = useState<tableDataT>({"columns": [
+        { "name": "Transaction Hash", "sort": true },
+        { "name": "Age", "sort": true },
+        { "name": "Safe", "sort": false },
+        { "name": "Target", "sort": false }
+    ]} as tableDataT);
     const [safeModuleLoading, setSafeModuleLoading] = useState(true);
     const [safeMultiSigLoading, setSafeMultiSigLoading] = useState(true);
 
-    // const [bundlesTable, setBundlesTable] = useState<tableDataT>(BundlesTable as tableDataT);
-    // const [operationsTable, setOperationsTable] = useState<tableDataT>(OperationsTable as tableDataT);
-    // const [bundlersTable, setBundlersTable] = useState<tableDataT>(BundlersTable as tableDataT);
-    // const [paymastersTable, setPaymastersTable] = useState<tableDataT>(PaymastersTable as tableDataT);
-    // const [userOpTableLoading, setUserOpTableLoading] = useState(true);
-    // const [bundleTableLoading, setBundleTableLoading] = useState(true);
-    // const [bundlerTableLoading, setBundlerTableLoading] = useState(true);
-    // const [paymasterTableLoading, setPaymasterTableLoading] = useState(true);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
-        // refreshBundlesTable(selectedNetwork);
-        // refreshUserOpsTable(selectedNetwork);
-        // refreshBundlersTable(selectedNetwork);
-        // refreshPaymastersTable(selectedNetwork);
         refreshSafeMultiSigTransactions(selectedNetwork);
         refreshSafeModuleTransactions(selectedNetwork);
     }, [selectedNetwork]);
@@ -69,6 +67,7 @@ function Home() {
         });
         setSafeMultiSigTable({ ...safeMultiSigTable, rows: newRow.slice(0, 10) });
         setSafeMultiSigLoading(false);
+        setLoading(false);
     };
 
     const refreshSafeModuleTransactions = async (network: string) => {
@@ -111,7 +110,7 @@ function Home() {
             <div className="container">
                 <div className="flex flex-wrap items-center justify-between gap-3 py-2 mb-4 md:gap-10">
                     
-                    {/* <NetworkSelector selectedNetwork={selectedNetwork} handleNetworkChange={setSelectedNetwork} disabled={loading} /> */}
+                    <NetworkSelector selectedNetwork={selectedNetwork} handleNetworkChange={setSelectedNetwork} disabled={loading} />
                 </div>
             </div>
             {/* {selectedNetwork != 'matic' && <RecentMetrics selectedNetwork={selectedNetwork} setLoading={setLoading} loading={loading} />} */}

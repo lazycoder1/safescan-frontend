@@ -25,7 +25,7 @@ import User from '@/components/global/navbar/User';
 import Spinner from '@/components/common/Spinner';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { getSafeModuleTransaction, safeModuleTransaction } from '@/components/common/apiCalls/safeScanApis';
+import { getSafeModuleTransaction, SafeModuleTransaction } from '@/components/common/apiCalls/safeScanApis';
 
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -96,7 +96,6 @@ function RecentUserOps(props: any) {
 
     const hash = props.slug && props.slug[0];
     // const network = router.query && router.query.network;
-    const network = 'polygon';
 
     const [selectedColor, setSelectedColor] = useState(BUTTON_LIST[0].key);
     // const [userOpsData, setuserOpsData] = useState<UserOp[]>([] as UserOp[]);
@@ -105,11 +104,11 @@ function RecentUserOps(props: any) {
     // const [metaData, setMetaData] = useState<metadata>();
     // const [duplicateUserOpsRows, setDuplicateUserOpsRows] = useState<tableDataT['rows']>([] as tableDataT['rows']);
 
-    const [safeModuleTransactionData, setSafeModuleTransactionData] = useState<safeModuleTransaction>({} as safeModuleTransaction);
+    const [safeModuleTransactionData, setSafeModuleTransactionData] = useState<SafeModuleTransaction>({} as SafeModuleTransaction);
 
     const refreshSafeTable = async (hash: string) => {
-        const safeModuleRes = await returnModuleTransaction(hash, network, toast);
-        setSafeModuleTransactionData(safeModuleRes? safeModuleRes : {} as safeModuleTransaction);
+        const safeModuleRes = await returnModuleTransaction(hash, selectedNetwork, toast);
+        setSafeModuleTransactionData(safeModuleRes? safeModuleRes : {} as SafeModuleTransaction);
         setTableLoading(false);
     };
 
@@ -122,7 +121,7 @@ function RecentUserOps(props: any) {
 
     let prevHash = hash;
     useEffect(() => {
-        setSelectedNetwork(network as string);
+        setSelectedNetwork(selectedNetwork as string);
         // Check if hash or network have changed
         if (prevHash !== undefined) {
             prevHash = hash;
@@ -193,7 +192,7 @@ function RecentUserOps(props: any) {
             </section>
             <>
                     <>
-                        <HeaderSection safeHash={safeModuleTransactionData?.transactionHash} transactionHash={safeModuleTransactionData?.transactionHash} network={network} loading={tableLoading} />
+                        <HeaderSection safeHash={safeModuleTransactionData?.transactionHash} transactionHash={safeModuleTransactionData?.transactionHash} network={selectedNetwork} loading={tableLoading} />
                         <ModuleTransactionDetails
                             tableLoading={tableLoading}
                             skeletonCards={skeletonCards}

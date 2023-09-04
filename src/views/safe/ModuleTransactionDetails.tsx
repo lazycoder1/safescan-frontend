@@ -38,7 +38,7 @@ import ERC20Transfers from './ERC20Transfers';
 import ExecutionTrace from './ExecutionTrace';
 import ERC721Transfers from './ERC721Transfers';
 import TransactionDetailsRow from '@/components/common/TransactionDetailsRow';
-import { safeModuleTransaction } from '@/components/common/apiCalls/safeScanApis';
+import { SafeModuleTransaction } from '@/components/common/apiCalls/safeScanApis';
 export default function ModuleTransactionDetails({
     tableLoading,
     skeletonCards,
@@ -48,7 +48,7 @@ export default function ModuleTransactionDetails({
 }: {
     tableLoading: boolean,
     skeletonCards: any,
-    item: safeModuleTransaction,
+    item: SafeModuleTransaction,
     addressMapping: any,
     selectedNetwork: string
 }) {
@@ -117,7 +117,7 @@ export default function ModuleTransactionDetails({
                                             <TransactionDetailsRow
                                                 key="6"
                                                 header={'Safe Module ID'}
-                                                value={"0x"+item?.moduleTransactionId}
+                                                value={item?.moduleTransactionId}
                                                 network="polygon"
                                                 // link={`/account/${item?.to}?network=${item?.network ? item?.network : ''}`}
                                             />

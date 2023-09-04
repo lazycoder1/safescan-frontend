@@ -1,7 +1,7 @@
 export const NETWORK_LIST = [
     {
         name: 'Polygon',
-        key: 'matic',
+        key: 'polygon',
         iconPath: '/images/polygon-icon.svg',
         iconPathInverted: '/images/polygon-icon.svg',
     },
@@ -120,6 +120,7 @@ export const NETWORK_ICON_MAP: NETWORK_ICON_MAP = {
     goerli: '/images/eth-diamond-purple.svg',
     sepolia: '/images/eth-diamond-purple.svg',
     matic: '/images/polygon-icon.svg',
+    polygon: '/images/polygon-icon.svg',
     mumbai: '/images/polygon-mumbai-icon.svg',
     'optimism-goerli': '/images/icon-container (6).svg',
     optimism: '/images/icon-container (6).svg',

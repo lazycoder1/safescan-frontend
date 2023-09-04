@@ -30,6 +30,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useConfig } from '@/context/config';
 import { set } from 'lodash';
 import LinkAndCopy from '@/components/common/LinkAndCopy';
+import { MultiSigTransaction, SafeModuleTransaction, getSafeAddress, getSafeModuleTransactions, getSafeMultiSigTransactions, moduleTransaction, Safe } from '@/components/common/apiCalls/safeScanApis';
 
 // import Skeleton from '@/components/Skeleton';
 export const BUTTON_LIST = [
@@ -53,7 +54,14 @@ const userOpColumns = [
     { name: 'Fee', sort: true },
 ];
 
-const TransactionColumns = [
+const moduleTransactionColumns = [
+    { name: 'Transaction Hash', sort: true },
+    { name: 'Age', sort: true },
+    { name: 'Sender', sort: false },
+    { name: 'Target', sort: false },
+];
+
+const multiSigTransactionColumns = [
     { name: 'Transaction Hash', sort: true },
     { name: 'Age', sort: true },
     { name: 'Sender', sort: false },
@@ -160,48 +168,43 @@ const createUserOpsTableRows = (userOps: UserOp[]): tableDataT['rows'] => {
     return newRows;
 };
 
-const createTransactionTableRows = (transactions: Transaction[], network: string): tableDataT['rows'] => {
+const createModuleTransactionTableRows = (transactions: SafeModuleTransaction[], network: string): tableDataT['rows'] => {
     let newRows = [] as tableDataT['rows'];
     if (!transactions) return newRows;
     transactions.forEach((transaction) => {
         newRows.push({
             token: {
-                text: transaction.tx_hash,
+                text: transaction.transactionHash,
                 icon: NETWORK_ICON_MAP[network],
                 type: 'transaction',
             },
-            ago: getTimePassed((new Date(transaction.block_signed_at)).getTime()/1000),
-            sender: transaction.from_address,
-            target: [transaction.to_address],
-            fee: getFee(transaction.gas_price, network),
-            status: transaction.successful,
+            ago: getTimePassed((new Date(transaction.executionDate)).getTime()/1000),
+            sender: transaction.module,
+            target: [transaction.to],
+            status: transaction.isSuccessful,
         });
     });
     return newRows;
 };
 
-
-interface AccountInfo {
-    address: string;
-    totalDeposit: number;
-    userOpsCount: number;
-    userOpHash: string;
-    blockTime: number;
-    factory: string;
-    ethBalance?: string;
-    tokenBalances?: tokenBalance[];
-}
-
-const createAccountInfoObject = (addressActivity: AddressActivity): AccountInfo => {
-    return {
-        address: addressActivity.accountDetail.address,
-        totalDeposit: parseInt(addressActivity.accountDetail.totalDeposits),
-        userOpsCount: parseInt(addressActivity.accountDetail.userOpsCount),
-        userOpHash: addressActivity.accountDetail.userOpHash,
-        blockTime: parseInt(addressActivity.accountDetail.blockTime),
-        factory: addressActivity.accountDetail.factory,
-        // tokenBalances: 'tokenBalances' in addressActivity ? (addressActivity.tokenBalances as tokenBalance[]) : [],
-    };
+const createMultiSigTransactionTableRows = (transactions: MultiSigTransaction[], network: string): tableDataT['rows'] => {
+    let newRows = [] as tableDataT['rows'];
+    if (!transactions) return newRows;
+    transactions.forEach((transaction) => {
+        newRows.push({
+            token: {
+                text: transaction.transactionHash,
+                icon: NETWORK_ICON_MAP[network],
+                type: 'transaction',
+            },
+            ago: getTimePassed((new Date(transaction.blockTimestamp)).getTime()/1000),
+            sender: transaction.safe,
+            target: [transaction.to],
+            fee: getFee(parseInt(transaction.ethGasPrice), network),
+            status: transaction.isSuccessful,
+        });
+    });
+    return newRows;
 };
 
 interface TabPanelProps {
@@ -248,7 +251,7 @@ function Account(props: any) {
     const hash = props.slug && props.slug[0];
     const network = router.query && (router.query.network as string);
     const [rows, setRows] = useState([] as tableDataT['rows']);
-    const [addressInfo, setAddressInfo] = useState<AccountInfo>();
+    const [addressInfo, setAddressInfo] = useState<Safe>();
     const [pageNo, setPageNo] = useState(0);
     const [pageSize, _setPageSize] = useState(DEFAULT_PAGE_SIZE);
     const [tokenBalances, setTokenBalances] = useState<tokenBalance[]>([]);
@@ -258,8 +261,12 @@ function Account(props: any) {
     const [erc721Transfers, setErc721Transfers] = useState<tokenTransferAlchemy[]>([]);
     const [erc20PageNo, setErc20PageNo] = useState(0);
     const [erc721PageNo, setErc721PageNo] = useState(0);
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
-    const [transactionsTableRows, setTransactionsTableRows] = useState<tableDataT['rows']>([]);
+    const [moduleTransactions, setModuleTransactions] = useState<SafeModuleTransaction[]>([]);
+    const [multiSigTransactions, setMultiSigTransactions] = useState<MultiSigTransaction[]>([]);
+    const [moduleTxnCount, setModuleTxnCount] = useState(0);
+    const [multiSigTxnCount, setMultiSigTxnCount] = useState(0);
+    const [multiSigTransactionsTableRows, setMultiSigTransactionsTableRows] = useState<tableDataT['rows']>([]);
+    const [moduleTransactionsTableRows, setModuleTransactionsTableRows] = useState<tableDataT['rows']>([]);
     const [transactionsPageNo, setTransactionsPageNo] = useState(0);
 
     const [mounted, setMounted] = useState(false);
@@ -267,19 +274,6 @@ function Account(props: any) {
     useEffect(() => {
         setMounted(true);
     }, []);
-
-    // handling table page change. Everytime the pageNo change, or pageSize change this function will fetch new data and update it.
-    const updateRowsData = async (network: string, pageNo: number, pageSize: number) => {
-        setTableLoading(true);
-        if (addressInfo == undefined) {
-            return;
-        }
-        const addressActivity = await getAddressActivity(addressInfo.address, network ? network : '', pageNo, pageSize, toast);
-        const rows = createUserOpsTableRows(addressActivity.accountDetail.userOps);
-        setRows(rows);
-        if (rows.length > 0) 
-            setTableLoading(false);
-    };
 
     // update the page No after changing the pageSize
     const setPageSize = (size: number) => {
@@ -291,15 +285,34 @@ function Account(props: any) {
 
     // fetch erc 20 balances
     const loadAccountBalances = async (name: string, network: string) => {
-        const tokenBalances = await getAddressBalances(name, network ? network : '', DEFAULT_PAGE_SIZE, pageNo, toast);
+        const tokenBalances = await getAddressBalances(name, "polygon", DEFAULT_PAGE_SIZE, pageNo, toast);
         setTokenBalances(tokenBalances);
     };
 
-    const loadAccountTransaction = async (name: string, network: string) => {
-        const transactions = await getAddressTransactions(name, network ? network : '', DEFAULT_PAGE_SIZE, pageNo, toast);
-        setTransactions(transactions);
-        const transactionRows = createTransactionTableRows(transactions, network ? network : '');
-        setTransactionsTableRows(transactionRows);
+    const loadAccountModuleTransactions = async (name: string, network: string) => {
+        const moduleTransactionsResponse = await getSafeModuleTransactions(name, "polygon", DEFAULT_PAGE_SIZE, pageNo, toast);
+        const count = moduleTransactionsResponse.count;
+        
+        const moduleTransactions = moduleTransactionsResponse.results;
+        const moduleTransactionsTableRows = createModuleTransactionTableRows(moduleTransactions.slice(0, pageSize * (pageNo + 1)), "polygon");
+        console.log("module Transactions - "+moduleTransactions);
+        
+        setModuleTxnCount(count)
+        setModuleTransactions(moduleTransactions);
+        setModuleTransactionsTableRows(moduleTransactionsTableRows);
+    };
+
+    const loadAccountMultiSigTransactions = async (name: string, network: string) => {
+        setTableLoading(true);
+        const multiSigTransactionsResponse = await getSafeMultiSigTransactions(name, "polygon", DEFAULT_PAGE_SIZE, pageNo, toast);
+        const count = multiSigTransactionsResponse.count;
+        const multiSigTransactions = multiSigTransactionsResponse.results;
+        const multiSigTransactionsTableRows = createMultiSigTransactionTableRows(multiSigTransactions.slice(0, pageSize * (pageNo + 1)), "polygon");
+        
+        setMultiSigTxnCount(count);
+        setMultiSigTransactions(multiSigTransactions);
+        setMultiSigTransactionsTableRows(multiSigTransactionsTableRows);
+        setTableLoading(false);
     };
 
     // fetch erc20 transfers
@@ -321,21 +334,12 @@ function Account(props: any) {
     // load the account details.
     const loadAccountDetails = async (name: string, network: string) => {
         setTableLoading(true);
-        const addressActivity = await getAddressActivity(name, network ? network : '', DEFAULT_PAGE_SIZE, pageNo, toast);
-        const accountInfo = createAccountInfoObject(addressActivity);
-        const rows = createUserOpsTableRows(addressActivity.accountDetail.userOps);
-        setRows(rows);
-        setAddressInfo(accountInfo);
+        const safe = await getSafeAddress(name, "polygon");
+        if (safe) {
+            setAddressInfo(safe);
+        }
         setTableLoading(false);
     };
-
-    useEffect(() => {
-        updateRowsData(network ? network : '', pageSize, pageNo);
-        const urlParams = new URLSearchParams(window.location.search);
-        urlParams.set('pageNo', (pageNo).toString());
-        urlParams.set('pageSize', pageSize.toString());
-        window.history.pushState(null, '', `${window.location.pathname}?${urlParams.toString()}`);
-    }, [pageNo]);
 
     useEffect(() => {
         let erc20RowData = constructERC20TransferRows(
@@ -358,10 +362,11 @@ function Account(props: any) {
             prevHash = hash;
             prevNetwork = network;
             loadAccountDetails(hash as string, network as string);
+            loadAccountModuleTransactions(hash as string, network as string);
+            loadAccountMultiSigTransactions(hash as string, network as string);
             loadAccountBalances(hash as string, network as string);
             loadAccountERC20Transfers(hash as string, network as string);
             loadAccountERC721Transfers(hash as string, network as string);
-            loadAccountTransaction(hash as string, network as string);
         }
     }, [hash, network]);
 
@@ -382,9 +387,6 @@ function Account(props: any) {
                             <Link underline="hover" color="inherit" href={`/?network=${network ? network : ''}`}>
                                 Home
                             </Link>
-                            <Link underline="hover" color="inherit" href="/recentUserOps">
-                                Recent User Ops
-                            </Link>
                             <Link
                                 underline="hover"
                                 color="text.primary"
@@ -399,22 +401,22 @@ function Account(props: any) {
                 </div>
             </section>
             <HeaderSection item={addressInfo} network={network} />
-            <TransactionDetails item={addressInfo} network={network} addressMapping={addressMapping} tokenBalances={tokenBalances} tableLoading={tableLoading}/>
+            <TransactionDetails item={addressInfo ? addressInfo : {} as Safe} network={network} addressMapping={addressMapping} tokenBalances={tokenBalances} tableLoading={tableLoading}/>
 
             <div className="container px-0">
                 <Box sx={{ width: '100%' }}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs value={tabNo} onChange={(e, newTabNo) => setTabNo(newTabNo)} aria-label="basic tabs example">
-                            <Tooltip title='ERC-4337 Transactions of user' placement='top'><Tab label={`User Ops (${addressInfo?.userOpsCount ? addressInfo?.userOpsCount : 0})`} tabIndex={0} {...a11yProps(0)} /></Tooltip>
-                            <Tooltip title='Internal + External transactions' placement='top'><Tab label={`Transactions (${transactions.length})`} tabIndex={3} {...a11yProps(2)} /></Tooltip>
+                            <Tooltip title='Multi Signature Transactions' placement='top'><Tab label={`Multi Signature Txns (${multiSigTxnCount})`} tabIndex={0} {...a11yProps(0)} /></Tooltip> 
+                            <Tooltip title='Module Transactions' placement='top'><Tab label={`Module Transactions (${moduleTxnCount})`} tabIndex={3} {...a11yProps(2)} /></Tooltip>
                             <Tooltip title='ERC-20 Transfers' placement='top'><Tab label={`Token Transfers (${erc20Transfers.length})`} tabIndex={1} {...a11yProps(1)} /></Tooltip>
                             <Tooltip title='ERC721 + ERC1155 Transfers' placement='top'><Tab label={`NFT Transfers (${erc721Transfers.length})`} tabIndex={2} {...a11yProps(2)} /></Tooltip>
                         </Tabs>
                     </Box>
                     <TabPanel value={tabNo} index={0}>
                         <Table
-                            rows={rows}
-                            columns={userOpColumns}
+                            rows={multiSigTransactionsTableRows}
+                            columns={multiSigTransactionColumns}
                             loading={tableLoading}
                         />
                         <Pagination
@@ -423,14 +425,14 @@ function Account(props: any) {
                                 setPageNo,
                                 pageSize,
                                 setPageSize,
-                                totalRows: addressInfo?.userOpsCount != null ? addressInfo.userOpsCount : 0,
+                                totalRows: multiSigTxnCount, //TODO
                             }}
                         />
                     </TabPanel>
                     <TabPanel value={tabNo} index={1}>
                         <Table
-                            rows={transactionsTableRows}
-                            columns={TransactionColumns}
+                            rows={moduleTransactionsTableRows}
+                            columns={moduleTransactionColumns}
                             loading={tableLoading}
                         />
                         <Pagination
@@ -439,8 +441,8 @@ function Account(props: any) {
                                 setPageNo: setTransactionsPageNo,
                                 pageSize,
                                 setPageSize,
-                                totalRows: transactions.length,
-                                fixedPageSize: 100,
+                                totalRows: moduleTransactionsTableRows.length,
+                                fixedPageSize: moduleTxnCount,
                             }}
                         />
                     </TabPanel>

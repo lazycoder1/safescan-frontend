@@ -96,7 +96,6 @@ function RecentUserOps(props: any) {
 
     const hash = props.slug && props.slug[0];
     // const network = router.query && router.query.network;
-    const network = 'polygon';
 
     const [selectedColor, setSelectedColor] = useState(BUTTON_LIST[0].key);
     // const [userOpsData, setuserOpsData] = useState<UserOp[]>([] as UserOp[]);
@@ -123,7 +122,7 @@ function RecentUserOps(props: any) {
 
     let prevHash = hash;
     useEffect(() => {
-        setSelectedNetwork(network as string);
+        setSelectedNetwork(selectedNetwork as string);
         // Check if hash or network have changed
         if (prevHash !== undefined) {
             prevHash = hash;
@@ -194,7 +193,7 @@ function RecentUserOps(props: any) {
             </section>
             <>
                     <>
-                        <HeaderSection safeHash={safeTransactionData?.safeTxHash} transactionHash={safeTransactionData?.transactionHash} network={network} loading={tableLoading} />
+                        <HeaderSection safeHash={safeTransactionData?.safeTxHash} transactionHash={safeTransactionData?.transactionHash} network={selectedNetwork} loading={tableLoading} />
                         <TransactionDetails
                             tableLoading={tableLoading}
                             skeletonCards={skeletonCards}

@@ -11,7 +11,18 @@ import { useRouter } from 'next/router';
 
 import React, { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton-2';
-export default function TransactionDetails({ item, network, addressMapping, tableLoading, tokenBalances }: any) {
+import { Safe } from '@/components/common/apiCalls/safeScanApis';
+import TransactionDetailsRow from '@/components/common/TransactionDetailsRow';
+
+interface TransactionDetailsProps {
+    item: Safe;
+    network: string;
+    addressMapping: any;
+    tableLoading: boolean;
+    tokenBalances: tokenBalance[];
+}
+
+export default function TransactionDetails({ item, network, addressMapping, tableLoading, tokenBalances }: TransactionDetailsProps) {
     console.log('🚀 ~ file: TransactionDetails.tsx:11 ~ TransactionDetails ~ item:', item);
     const [tableLoading1, setTableLoading1] = useState(true);
     const [selectValue, setSelectValue] = useState(0 as number);
@@ -55,176 +66,10 @@ export default function TransactionDetails({ item, network, addressMapping, tabl
                         ) : (
                             <div>
                                 <section className="">
-                                    <div className="container rounded  px-0">
-                                        <div className="flex items-center md:pt-[0px] pt-[16px]  md:border-b border-[#ccc] border-0 md:gap-[20px] gap-[10px]  pb-[2px]">
-                                            <div className="md:w-[280px] px-[16px] py-[8px] flex items-center gap-2">
-                                                <IconText icon={'/images/sader.svg'}>
-                                                    <span className="text-[14px] font-normal md:block hidden leading-5 text-dark-600">
-                                                        Deployment Date
-                                                    </span>
-                                                </IconText>
-                                            </div>
-                                            <div className=" break-words gap-2 flex-1">
-                                                <div>
-                                                    <p className="text-[14px] text-[#455A64] md:hidden block">Deployment Date</p>
-                                                </div>
-                                                {item?.userOpHash ? (
-                                                    <div className="md:flex block justify-between">
-                                                        <div className="flex items-center gap-[10px]">
-                                                            <Link
-                                                                underline="hover"
-                                                                // color="text.primary"
-                                                                href={
-                                                                    '/userOpHash/' +
-                                                                    item?.userOpHash +
-                                                                    (network ? '/?network=' + network : '')
-                                                                }
-                                                                aria-current="page"
-                                                                className="text-blue-200"
-                                                            >
-                                                                <span className="text-[#1976D2] md:text-[14px] text-[16px] break-all leading-5">
-                                                                    {getTimePassed(item?.blockTime)}
-                                                                </span>
-                                                            </Link>
-                                                            <div className="w-[30px] flex">
-                                                                <CopyButton text={item?.address} />
-                                                            </div>
-                                                            <Link
-                                                                underline="hover"
-                                                                // color="text.primary"
-                                                                href={
-                                                                    '/userOpHash/' +
-                                                                    item?.userOpHash +
-                                                                    (network ? '/?network=' + network : '')
-                                                                }
-                                                                aria-current="page"
-                                                                className="text-blue-200 "
-                                                                target={'_blank'}
-                                                            >
-                                                                <button className="outline-none md:block hidden focus:outline-none ring-0 focus:ring-0">
-                                                                    <img src="/images/share.svg" alt="" />
-                                                                    {/* </Link> */}
-                                                                </button>
-                                                            </Link>
-                                                        </div>
-                                                    </div>
-                                                ) : (
-                                                    <div className="md:flex block justify-between">
-                                                        <div className="flex items-center gap-[10px]">
-                                                            <span className="text-dark-600 md:text-[14px] text-[16px] break-all leading-5">
-                                                                Possibly not a 4337 compliant wallet.
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center md:pt-[0px] pt-[16px]  md:border-b border-[#ccc] border-0 md:gap-[20px] gap-[10px]  pb-[2px]">
-                                            <div className="md:w-[280px] px-[16px] py-[8px] flex items-center gap-2">
-                                                <IconText icon={'/images/sader.svg'}>
-                                                    <span className="text-[14px] font-normal md:block hidden leading-5 text-dark-600">
-                                                        Factory
-                                                    </span>
-                                                </IconText>
-                                            </div>
-                                            <div className=" break-words gap-2 flex-1">
-                                                <div>
-                                                    <p className="text-[14px] text-[#455A64] md:hidden block">Factory</p>
-                                                </div>
-                                                {item?.userOpHash ? (
-                                                    <div className="md:flex block justify-between">
-                                                        <div className="flex items-center gap-[10px]">
-                                                            <Link
-                                                                underline="hover"
-                                                                // color="text.primary"
-                                                                href={'/factory/' + item?.factory + (network ? '/?network=' + network : '')}
-                                                                aria-current="page"
-                                                                className="text-blue-200"
-                                                            >
-                                                                <span className="text-[#1976D2] md:text-[14px] text-[16px] break-all leading-5">
-                                                                    {item.factory}
-                                                                </span>
-                                                            </Link>
-                                                            <div className="w-[30px] flex">
-                                                                <CopyButton text={item?.factory} />
-                                                            </div>
-                                                            <Link
-                                                                underline="hover"
-                                                                // color="text.primary"
-                                                                href={'/factory/' + item?.factory + (network ? '/?network=' + network : '')}
-                                                                aria-current="page"
-                                                                className="text-blue-200 "
-                                                                target={'_blank'}
-                                                            >
-                                                                <button className="outline-none md:block hidden focus:outline-none ring-0 focus:ring-0">
-                                                                    <img src="/images/share.svg" alt="" />
-                                                                    {/* </Link> */}
-                                                                </button>
-                                                            </Link>
-                                                        </div>
-                                                        {item?.factory === '' ? null : (
-                                                            <div className="md:px-[16px] px-0 md:py-[8px] py-0">
-                                                                <p className="text-[10px] text-[#455A64]">
-                                                                    {addressMapping?.[item?.factory?.toLowerCase()] &&
-                                                                        POWERED_BY_LOGO_MAP?.[
-                                                                            addressMapping?.[
-                                                                                item?.factory?.toLowerCase()
-                                                                            ]?.company.toLowerCase()
-                                                                        ] && (
-                                                                            <span className="text-bluegrey-300 text-[10px] leading-5 flex items-center gap-2 font-normal">
-                                                                                Power by{' '}
-                                                                                <img
-                                                                                    src={
-                                                                                        POWERED_BY_LOGO_MAP?.[
-                                                                                            addressMapping?.[
-                                                                                                item?.factory?.toLowerCase()
-                                                                                            ]?.company.toLowerCase()
-                                                                                        ]?.small
-                                                                                    }
-                                                                                    style={{ height: 20, width: 20 }}
-                                                                                    alt=""
-                                                                                />
-                                                                            </span>
-                                                                        )}
-                                                                </p>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                ) : (
-                                                    <div className="md:flex block justify-between">
-                                                        <div className="flex items-center gap-[10px]">
-                                                            <span className="text-dark-600 md:text-[14px] text-[16px] break-all leading-5">
-                                                                Possibly not a 4337 compliant wallet.
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div className="flex md:pt-[0px] pt-[16px] items-center md:border-b border-[#ccc] border-0 md:gap-[20px] gap-[10px]  pb-[2px]">
-                                            <div className="md:w-[280px] px-[16px] py-[8px] flex items-center gap-2">
-                                                <IconText icon={'/images/sader.svg'}>
-                                                    <span className="text-[14px] font-normal md:block hidden leading-5 text-dark-600">
-                                                        Total Deposit
-                                                    </span>
-                                                </IconText>
-                                            </div>
-                                            <div className=" break-words gap-2 flex-1">
-                                                <div>
-                                                    <p className="text-[14px] text-[#455A64] md:hidden block">Total Deposit</p>
-                                                </div>
-                                                <div className="md:flex block justify-between">
-                                                    <div className="flex items-center gap-[10px]">
-                                                        <span className="text-dark-600 md:text-[14px] text-[16px] break-all leading-5">
-                                                            <DisplayFee
-                                                                item={item?.totalDeposit ? item?.totalDeposit : '0'}
-                                                                network={network}
-                                                            />
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div className="container px-0 rounded">
+                                        <TransactionDetailsRow header={"Safe"} value={item?.address} network={network} link={`${NETWORK_SCANNER_MAP[network]}/address/${item.address}`} />
+                                        <TransactionDetailsRow header={"Transactions executed"} value={item?.nonce ? item?.nonce.toString() : "0"} network={network} />
+                                        <TransactionDetailsRow header={"Owners"} value={item?.owners?.join(", ")} network={network}  />
                                         {totalBalance > -1 && (
                                             <div className="flex md:pt-[0px] pt-[16px] items-center md:border-b border-[#ccc] border-0 md:gap-[20px] gap-[10px]  pb-[2px]">
                                             <div className="md:w-[280px] px-[16px] py-[8px] flex items-center gap-2">
@@ -234,11 +79,11 @@ export default function TransactionDetails({ item, network, addressMapping, tabl
                                                     </span>
                                                 </IconText>
                                             </div>
-                                            <div className=" break-words gap-2 flex-1">
+                                            <div className="flex-1 gap-2 break-words ">
                                                 <div>
                                                     <p className="text-[14px] text-[#455A64] md:hidden block">Total Balance</p>
                                                 </div>
-                                                <div className="md:flex block justify-between">
+                                                <div className="justify-between block md:flex">
                                                     <div className="flex items-center gap-[10px]">
                                                         <span className="text-dark-600 md:text-[14px] text-[16px] break-all leading-5">
                                                             {`$${totalBalance.toFixed(2)}`}
@@ -257,11 +102,11 @@ export default function TransactionDetails({ item, network, addressMapping, tabl
                                                         </span>
                                                     </IconText>
                                                 </div>
-                                                <div className=" break-words gap-2 flex-1">
+                                                <div className="flex-1 gap-2 break-words ">
                                                     <div>
                                                         <p className="text-[14px] text-[#455A64] md:hidden block">ERC20 Balances</p>
                                                     </div>
-                                                    <div className="md:flex block justify-between">
+                                                    <div className="justify-between block md:flex">
                                                         <div className="flex items-center gap-[10px]">
                                                             <span className="text-dark-600 md:text-[14px] text-[16px] break-all leading-5">
                                                                 <Select
@@ -276,7 +121,7 @@ export default function TransactionDetails({ item, network, addressMapping, tabl
                                                                         
                                                                             return (
                                                                                 <MenuItem key={index} value={index}>
-                                                                                    <div className="flex flow-root gap-2 w-full">
+                                                                                    <div className="flex flow-root w-full gap-2">
                                                                                         <div className="float-left">
                                                                                             {token.contract_name}  
                                                                                         </div>

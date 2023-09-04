@@ -7,7 +7,8 @@ import Options from './Options';
 import { LinearProgress, Snackbar } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { getMultiSigTransaction } from '@/components/common/apiCalls/safeScanApis';
+import { checkTransactionHash, getMultiSigTransaction } from '@/components/common/apiCalls/safeScanApis';
+import { transactionFromJSON } from 'opensea-js/lib/utils/utils';
 
 const showToast = (toast: any, message: string) => {
     toast.error(message, {
@@ -20,9 +21,38 @@ const showToast = (toast: any, message: string) => {
     })
 }
 
+enum hashType {
+    TRANSACTION,
+    MODULE_TRANSACTION,
+    MULTI_SIG_TRANSACTION,
+    SAFE_TRANSACTION_HASH,
+    ADDRESS,
+    MODULE_TRANSACTION_ID,
+    GIBBERISH
+}
+
+const getType = (searchTerm: string): hashType => {
+    if (searchTerm.length === 66) {
+        return hashType.TRANSACTION;
+    } else if (searchTerm.length === 42) {
+        return hashType.ADDRESS;
+    } else if (searchTerm.length === 67) {
+        return hashType.MODULE_TRANSACTION_ID;
+    } else {
+        return hashType.GIBBERISH;
+    }
+}
+
+
+const getTransactionHashFromModuleTransactionId = (searchTerm: string): string => {
+    console.log('transaction hash -', searchTerm.substring(1,64));
+    return "0x" + searchTerm.substring(1,65);
+}
+
 function Searchblock({ isNavbar }: { isNavbar: boolean }) {
     const { push } = useRouter();
     const [searching, setSearching] = useState(false);
+    const {selectedNetwork, setSelectedNetwork} = useConfig();
     const [term, setTerm] = useState('');
 
     const handleChange = (e: any) => setTerm(e.target.value.trim());
@@ -36,23 +66,32 @@ function Searchblock({ isNavbar }: { isNavbar: boolean }) {
     const handleSubmit = async () => {
         if (checkIfValidTerm(term)) {
             setSearching(true);
-            const res = await getMultiSigTransaction(term, 'polygon');
-            if ('safe' in res && res.safe != null) {
-                // const data = await res.json();
-                // let redirectUrl;
-                // if (data.foundInNetwork && data.type && data.term)
-                //     redirectUrl = constructRedirectUrl(data.type, data.foundInNetwork, data.term);
-                // if (redirectUrl) {
-                //     push(redirectUrl);
-                // } else {
-                //     showToast(toast, "No results found")
-                // }
-                push(`/safeMultiSig/${term}`)
-                setSearching(false);
+            console.log('term legth - ', term.length)
+            const type = getType(term);
+            if (type == hashType.TRANSACTION) {
+                const transactionType = await checkTransactionHash(term, selectedNetwork);
+                if (transactionType.type == "module") {
+                    push("/safeModuleTransaction/" + term + "/?network="+selectedNetwork);
+                } else if (transactionType.type == "multiSig") {
+                    push("/safeMultiSigTransaction/" + transactionType.transactionHash + "/?network="+selectedNetwork);
+                } else {
+                    showToast(toast, "Invalid search term ?")
+                }
+            } else if (type == hashType.ADDRESS) {
+                push("/account/" + term + "/?network="+selectedNetwork);
+            } else if (type == hashType.MODULE_TRANSACTION_ID) {
+                push("/safeModuleTransaction/" + getTransactionHashFromModuleTransactionId(term) + "/?network="+selectedNetwork); // NEEDS BETTER HANDLING
             } else {
-                showToast(toast, "Only safe multi sig tx hash supported for now")
-                setSearching(false);
+                showToast(toast, "Invalid search term ?")
             }
+            // const res = await getMultiSigTransaction(term, 'polygon');
+            // if ('safe' in res && res.safe != null) {
+                
+            //     setSearching(false);
+            // } else {
+            //     showToast(toast, "Only safe multi sig tx hash supported for now")
+            //     setSearching(false);
+            // }
         } else {
             showToast(toast, "Invalid search term ?")
         }

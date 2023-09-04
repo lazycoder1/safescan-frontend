@@ -55,3 +55,19 @@ export const GET_MODULE_TRANSACTIONS = `
     }
   }
 `
+
+export const CHECK_TRANSACTION_HASH = `
+  query MyQuery($transactionHash: String) {
+    safeModuleTransactions(where: {transactionHash_contains: $transactionHash}) {
+      id
+      transactionHash
+    }
+    safeMultiSigTransactions(
+      where: {or: [{safeTxHash_contains: $transactionHash}, {transactionHash_contains: $transactionHash}]}
+    ) {
+      id
+      transactionHash
+      safeTxHash
+    }
+  }
+`

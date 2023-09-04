@@ -112,9 +112,11 @@ export const constructRedirectUrl = (type: string, network: string, term: string
 };
 
 export const checkIfValidTerm = (term: string) => {
+    console.log(term.length)
     if (!term) return false;
     if (term.length === 42 && term.slice(0, 2) == '0x') return true;
     if (term.length === 66 && term.slice(0, 2) == '0x') return true;
+    if (term.length === 67) return true;
     if (term.length < 11 && !isNaN(parseInt(term))) return true;
     return false;
 };

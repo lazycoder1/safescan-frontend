@@ -131,7 +131,7 @@ function Table(props: tableDataT) {
 
                                             {sender && (
                                                 <td className="">
-                                                    <Token text={sender} type="blank" />
+                                                    <Token text={sender} type="address" />
                                                 </td>
                                             )}
 
@@ -141,7 +141,7 @@ function Table(props: tableDataT) {
                                                     { target.length > 0 &&  target.map((item, index) => {
                                                         console.log('target from table', target)
                                                         return (
-                                                            <Token key={index} text={item} type="blank" />
+                                                            <Token key={index} text={item} type="address" />
                                                         )
                                                     })}
                                                 </td>
