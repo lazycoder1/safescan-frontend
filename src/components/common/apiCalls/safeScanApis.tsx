@@ -12,10 +12,14 @@ const HEADERS = {
 
 const SAFE_BASE_URL: { [key: string]: string } = {
     polygon: 'https://safe-transaction-polygon.safe.global/api',
+    mainnet: 'https://safe-transaction-mainnet.safe.global/api',
+    "arbitrum-one": 'https://safe-transaction-arbitrum.safe.global/api',
 };
 
 const GRAPH_URL: { [key: string]: string } = {
     polygon: 'https://api.thegraph.com/subgraphs/name/lazycoder1/subgraph-safe-matic',
+    mainnet: 'https://api.thegraph.com/subgraphs/name/lazycoder1/subgraph-safe-mainnet',
+    "arbitrum-one": 'https://api.thegraph.com/subgraphs/name/lazycoder1/subgraph-safe-arbitrum',
 };
 
 export interface MultiSigTransaction {

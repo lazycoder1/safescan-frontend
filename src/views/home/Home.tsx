@@ -26,8 +26,8 @@ import {
 } from '@/components/common/apiCalls/safeScanApis';
 
 function Home() {
-    // const { selectedNetwork, setSelectedNetwork } = useConfig();
-    const [selectedNetwork, setSelectedNetwork] = useState('polygon');
+    const { selectedNetwork, setSelectedNetwork } = useConfig();
+    // const [selectedNetwork, setSelectedNetwork] = useState('polygon');
     const [safeMultiSigTable, setSafeMultiSigTable] = useState<tableDataT>({"columns": [
         { "name": "Transaction Hash", "sort": true },
         { "name": "Age", "sort": true },
