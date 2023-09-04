@@ -73,12 +73,12 @@ function Searchblock({ isNavbar }: { isNavbar: boolean }) {
                 if (transactionType.type == "module") {
                     push("/safeModuleTransaction/" + term + "/?network="+selectedNetwork);
                 } else if (transactionType.type == "multiSig") {
-                    push("/safeMultiSigTransaction/" + transactionType.transactionHash + "/?network="+selectedNetwork);
+                    push("/safeMultiSig/" + transactionType.transactionHash + "/?network="+selectedNetwork);  // go to safeTxnHash page
                 } else {
                     showToast(toast, "Invalid search term ?")
                 }
             } else if (type == hashType.ADDRESS) {
-                push("/account/" + term + "/?network="+selectedNetwork);
+                push("/account/" + term.toLocaleLowerCase() + "/?network="+selectedNetwork);
             } else if (type == hashType.MODULE_TRANSACTION_ID) {
                 push("/safeModuleTransaction/" + getTransactionHashFromModuleTransactionId(term) + "/?network="+selectedNetwork); // NEEDS BETTER HANDLING
             } else {

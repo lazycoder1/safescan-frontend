@@ -195,7 +195,7 @@ export const checkTransactionHash = async (transactionHash: string, network: str
     if (graphResponse.safeModuleTransactions.length > 0) {
         return {type:"module", transactionHash: "0x" + transactionHash};
     } else if (graphResponse.safeMultiSigTransactions.length > 0) {
-        return {type: "multiSig", transactionHash: graphResponse.safeMultiSigTransactions[0].transactionHash};
+        return {type: "multiSig", transactionHash: graphResponse.safeMultiSigTransactions[0].safeTxHash};
     } else {
         return {type: "none", transactionHash: "0x"+transactionHash};
     }
