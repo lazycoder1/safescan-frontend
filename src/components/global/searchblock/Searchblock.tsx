@@ -130,7 +130,7 @@ function Searchblock({ isNavbar }: { isNavbar: boolean }) {
                         <input
                             type="text"
                             className="text-base placeholder:text-dark-500 text-dark-600 px-4 py-2 flex-grow truncate min-w-0 max-w-none w-[0px]"
-                            placeholder="Search by Safe Transaction Hash..."
+                            placeholder="Search by Safe Transaction Hash, Transaction Hash, Safe address or Module address ..."
                             value={term}
                             onChange={handleChange}
                             onKeyDown={handleKeyPress}
