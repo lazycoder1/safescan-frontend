@@ -8,7 +8,6 @@ import { LinearProgress, Snackbar } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { checkTransactionHash, getMultiSigTransaction } from '@/components/common/apiCalls/safeScanApis';
-import { transactionFromJSON } from 'opensea-js/lib/utils/utils';
 
 const showToast = (toast: any, message: string) => {
     toast.error(message, {
