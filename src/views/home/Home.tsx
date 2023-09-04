@@ -27,7 +27,6 @@ import {
 
 function Home() {
     const { selectedNetwork, setSelectedNetwork } = useConfig();
-    // const [selectedNetwork, setSelectedNetwork] = useState('polygon');
     const [safeMultiSigTable, setSafeMultiSigTable] = useState<tableDataT>({"columns": [
         { "name": "Transaction Hash", "sort": true },
         { "name": "Age", "sort": true },
@@ -51,6 +50,7 @@ function Home() {
 
     const refreshSafeMultiSigTransactions = async (network: string) => {
         if (!network) return;
+        console.log('network -', network);
         const latestMultiSigTransactions = await getLatestMultiSigTransactions(network);
         let newRow = [] as tableDataT['rows'];
         latestMultiSigTransactions.forEach((tx: MultiSigTransaction) => {
@@ -73,6 +73,7 @@ function Home() {
 
     const refreshSafeModuleTransactions = async (network: string) => {
         if (!network) return;
+        console.log('network -', network);
         const latestModuleTransactions = await getLatestModuleTransactions(network);
         let newRow = [] as tableDataT['rows'];
         latestModuleTransactions.forEach((tx: moduleTransaction) => {

@@ -81,14 +81,14 @@ export default function ModuleTransactionDetails({
                                     <div className="container px-0 rounded">
                                             <TransactionDetailsRow
                                                 key="1"
-                                                header={'Sender'}
+                                                header={'Module'}
                                                 value={item?.module}
                                                 network="polygon"
-                                                // link={`/account/${item?.safe}?network=${item?.network ? item?.network : ''}`}
+                                                link={`/account/${item?.module}?network=${selectedNetwork ? selectedNetwork : ''}`}
                                             />
                                             <TransactionDetailsRow
                                                 key="2"
-                                                header={'Receiver'}
+                                                header={'Target'}
                                                 value={item?.to}
                                                 network="polygon"
                                                 // link={`/account/${item?.to}?network=${item?.network ? item?.network : ''}`}

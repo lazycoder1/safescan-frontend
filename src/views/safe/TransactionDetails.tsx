@@ -32,19 +32,34 @@ export interface ExecutionTraceType {
     next: Array<ExecutionTraceType> | null;
 }
 
+interface confirmation {
+    owner: string;
+    submissionDate: string;
+}
+
+interface ConfirmationProps {
+    confirmations: confirmation[];
+}
+function Confirmations({ confirmations }: ConfirmationProps): React.ReactNode {
+    return (
+        <div className="">
+            {confirmations.map((confirmation, index) => (
+                <div key={index} className="items-center flow-root md:flex">
+                    <LinkAndCopy text={confirmation.owner} copyText={confirmation.owner} link={null}></LinkAndCopy> at{' '}
+                    {confirmation.submissionDate}
+                </div>
+            ))}
+        </div>
+    );
+}
+
 import React, { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton-2';
 import ERC20Transfers from './ERC20Transfers';
 import ExecutionTrace from './ExecutionTrace';
 import ERC721Transfers from './ERC721Transfers';
 import TransactionDetailsRow from '@/components/common/TransactionDetailsRow';
-export default function TransactionDetails({
-    tableLoading,
-    skeletonCards,
-    item,
-    addressMapping,
-    selectedNetwork,
-}: any) {
+export default function TransactionDetails({ tableLoading, skeletonCards, item, addressMapping, selectedNetwork }: any) {
     const router = useRouter();
     const [showMetadata, setShowMetadata] = useState(false);
     const [reload, setReload] = useState(0);
@@ -72,85 +87,69 @@ export default function TransactionDetails({
                             <div>
                                 <section className="">
                                     <div className="container px-0 rounded">
-                                            <TransactionDetailsRow
-                                                key="1"
-                                                header={'Sender'}
-                                                value={item?.safe}
-                                                network="polygon"
-                                                // link={`/account/${item?.safe}?network=${item?.network ? item?.network : ''}`}
-                                            />
-                                            <TransactionDetailsRow
-                                                key="2"
-                                                header={'Receiver'}
-                                                value={item?.to}
-                                                network="polygon"
-                                                // link={`/account/${item?.to}?network=${item?.network ? item?.network : ''}`}
-                                            />
-                                            <TransactionDetailsRow
-                                                key="3"
-                                                header={'Value'}
-                                                value={item?.value}
-                                                network="polygon"
-                                                // link={`/account/${item?.to}?network=${item?.network ? item?.network : ''}`}
-                                            />
-                                            <TransactionDetailsRow
-                                                key="4"
-                                                header={'Transaction Hash'}
-                                                value={item?.transactionHash}
-                                                network="polygon"
-                                                // link={`/account/${item?.to}?network=${item?.network ? item?.network : ''}`}
-                                            />
-                                            <TransactionDetailsRow
-                                                key="5"
-                                                header={'Block Number'}
-                                                value={item?.blockNumber}
-                                                network="polygon"
-                                                // link={`/account/${item?.to}?network=${item?.network ? item?.network : ''}`}
-                                            />
-                                            <TransactionDetailsRow
-                                                key="6"
-                                                header={'Safe Hash'}
-                                                value={item?.safeTxHash}
-                                                network="polygon"
-                                                // link={`/account/${item?.to}?network=${item?.network ? item?.network : ''}`}
-                                            />
-                                            <TransactionDetailsRow
-                                                key="7"
-                                                header={'Gas Used'}
-                                                value={item?.gasUsed}
-                                                network="polygon"
-                                                // link={`/account/${item?.to}?network=${item?.network ? item?.network : ''}`}
-                                            />
-                                            <TransactionDetailsRow
-                                                key="8"
-                                                header={'Success'}
-                                                value={item?.isSuccessful ? 'Success' : 'Failure'}
-                                                network="polygon"
-                                            />
-                                            <TransactionDetailsRow
-                                                key="9"
-                                                header={'Timestamp'}
-                                                value={item?.executionDate}
-                                                network="polygon"
-                                            />
-                                            <TransactionDetailsRow
-                                                key="10"
-                                                header={'Nonce'}
-                                                value={item?.nonce}
-                                                network="polygon"
-                                            />
-                                            <TransactionDetailsRow
-                                                key="11"
-                                                header={'Approved by'}
-                                                value={item?.confirmations.map((confirmation: {
-                                                    owner: string;
-                                                    signature: string;
-                                                    signatureHash: string
-                                                }) => confirmation.owner).join(', ')}
-                                                network="polygon"
-                                            />
-
-                                        
+                                        <TransactionDetailsRow
+                                            key="1"
+                                            header={'Safe'}
+                                            value={item?.safe}
+                                            network="polygon"
+                                            link={`/account/${item?.safe}?network=${selectedNetwork ? selectedNetwork : ''}`}
+                                        />
+                                        <TransactionDetailsRow
+                                            key="2"
+                                            header={'Target'}
+                                            value={item?.to}
+                                            network="polygon"
+                                            // link={`/account/${item?.to}?network=${item?.network ? item?.network : ''}`}
+                                        />
+                                        <TransactionDetailsRow
+                                            key="3"
+                                            header={'Value'}
+                                            value={item?.value}
+                                            network="polygon"
+                                            // link={`/account/${item?.to}?network=${item?.network ? item?.network : ''}`}
+                                        />
+                                        <TransactionDetailsRow
+                                            key="4"
+                                            header={'Transaction Hash'}
+                                            value={item?.transactionHash}
+                                            network="polygon"
+                                            // link={`/account/${item?.to}?network=${item?.network ? item?.network : ''}`}
+                                        />
+                                        <TransactionDetailsRow
+                                            key="5"
+                                            header={'Block Number'}
+                                            value={item?.blockNumber}
+                                            network="polygon"
+                                            // link={`/account/${item?.to}?network=${item?.network ? item?.network : ''}`}
+                                        />
+                                        <TransactionDetailsRow
+                                            key="6"
+                                            header={'Safe Hash'}
+                                            value={item?.safeTxHash}
+                                            network="polygon"
+                                            // link={`/account/${item?.to}?network=${item?.network ? item?.network : ''}`}
+                                        />
+                                        <TransactionDetailsRow
+                                            key="7"
+                                            header={'Gas Used'}
+                                            value={item?.gasUsed}
+                                            network="polygon"
+                                            // link={`/account/${item?.to}?network=${item?.network ? item?.network : ''}`}
+                                        />
+                                        <TransactionDetailsRow
+                                            key="8"
+                                            header={'Success'}
+                                            value={item?.isSuccessful ? 'Success' : 'Failure'}
+                                            network="polygon"
+                                        />
+                                        <TransactionDetailsRow key="9" header={'Timestamp'} value={item?.executionDate} network="polygon" />
+                                        <TransactionDetailsRow key="10" header={'Nonce'} value={item?.nonce} network="polygon" />
+                                        <TransactionDetailsRow
+                                            key="11"
+                                            header={'Approved by'}
+                                            value={Confirmations({ confirmations: item?.confirmations })}
+                                            network="polygon"
+                                        />
                                     </div>
                                 </section>
                             </div>

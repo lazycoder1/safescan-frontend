@@ -148,26 +148,6 @@ const constructERC721TransferRows = (erc721Transfers: tokenTransferAlchemy[], ne
     return newRows;
 };
 
-const createUserOpsTableRows = (userOps: UserOp[]): tableDataT['rows'] => {
-    let newRows = [] as tableDataT['rows'];
-    if (!userOps) return newRows;
-    userOps.forEach((userOp) => {
-        newRows.push({
-            token: {
-                text: userOp.userOpHash,
-                icon: NETWORK_ICON_MAP[userOp.network],
-                type: 'userOp',
-            },
-            ago: getTimePassed(userOp.blockTime!),
-            sender: userOp.sender,
-            target: userOp.target ? userOp.target : ['Unavailable!'],
-            fee: getFee(userOp.actualGasCost, userOp.network as string),
-            status: userOp.success!,
-        });
-    });
-    return newRows;
-};
-
 const createModuleTransactionTableRows = (transactions: SafeModuleTransaction[], network: string): tableDataT['rows'] => {
     let newRows = [] as tableDataT['rows'];
     if (!transactions) return newRows;
@@ -176,7 +156,7 @@ const createModuleTransactionTableRows = (transactions: SafeModuleTransaction[],
             token: {
                 text: transaction.transactionHash,
                 icon: NETWORK_ICON_MAP[network],
-                type: 'transaction',
+                type: 'safeModuleTransaction',
             },
             ago: getTimePassed((new Date(transaction.executionDate)).getTime()/1000),
             sender: transaction.module,
@@ -195,9 +175,9 @@ const createMultiSigTransactionTableRows = (transactions: MultiSigTransaction[],
             token: {
                 text: transaction.transactionHash,
                 icon: NETWORK_ICON_MAP[network],
-                type: 'transaction',
+                type: 'safeMultiSig',
             },
-            ago: getTimePassed((new Date(transaction.blockTimestamp)).getTime()/1000),
+            ago: getTimePassed((new Date(transaction.executionDate)).getTime()/1000),
             sender: transaction.safe,
             target: [transaction.to],
             fee: getFee(parseInt(transaction.ethGasPrice), network),

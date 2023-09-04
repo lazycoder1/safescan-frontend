@@ -106,8 +106,8 @@ function RecentUserOps(props: any) {
 
     const [safeTransactionData, setSafeTransactionData] = useState<any>({});
 
-    const refreshSafeTable = async (hash: string) => {
-        setSafeTransactionData(await returnTransactionData(hash, 'polygon', toast));
+    const refreshSafeTable = async (hash: string, network: string) => {
+        setSafeTransactionData(await returnTransactionData(hash, network, toast));
         
         setTableLoading(false);
         
@@ -122,12 +122,11 @@ function RecentUserOps(props: any) {
 
     let prevHash = hash;
     useEffect(() => {
-        setSelectedNetwork(selectedNetwork as string);
         // Check if hash or network have changed
         if (prevHash !== undefined) {
             prevHash = hash;
             const refreshTable = () => {
-                refreshSafeTable(hash as string);
+                refreshSafeTable(hash as string, selectedNetwork as string);
             };
 
             refreshTable();

@@ -13,6 +13,7 @@ import React, { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton-2';
 import { Safe } from '@/components/common/apiCalls/safeScanApis';
 import TransactionDetailsRow from '@/components/common/TransactionDetailsRow';
+import LinkAndCopy from '@/components/common/LinkAndCopy';
 
 interface TransactionDetailsProps {
     item: Safe;
@@ -20,6 +21,19 @@ interface TransactionDetailsProps {
     addressMapping: any;
     tableLoading: boolean;
     tokenBalances: tokenBalance[];
+}
+
+function OwnersValue({owners}: {owners: string[]}) {
+    if (owners)
+        return (
+            <div className="">
+                {owners.map((owner, index) => (
+                    <div key={index} className="items-center flow-root md:flex"><LinkAndCopy text={owner} copyText={owner} link={null}></LinkAndCopy></div>
+                )
+            )}
+            </div>
+        )
+    return "";
 }
 
 export default function TransactionDetails({ item, network, addressMapping, tableLoading, tokenBalances }: TransactionDetailsProps) {
@@ -69,7 +83,8 @@ export default function TransactionDetails({ item, network, addressMapping, tabl
                                     <div className="container px-0 rounded">
                                         <TransactionDetailsRow header={"Safe"} value={item?.address} network={network} link={`${NETWORK_SCANNER_MAP[network]}/address/${item.address}`} />
                                         <TransactionDetailsRow header={"Transactions executed"} value={item?.nonce ? item?.nonce.toString() : "0"} network={network} />
-                                        <TransactionDetailsRow header={"Owners"} value={item?.owners?.join(", ")} network={network}  />
+                                        <TransactionDetailsRow header={"Owners"} value={OwnersValue({owners: item?.owners})} network={network}  />
+                                        <TransactionDetailsRow header={"Threshold"} value={item?.threshold?.toString()} network={network}  />
                                         {totalBalance > -1 && (
                                             <div className="flex md:pt-[0px] pt-[16px] items-center md:border-b border-[#ccc] border-0 md:gap-[20px] gap-[10px]  pb-[2px]">
                                             <div className="md:w-[280px] px-[16px] py-[8px] flex items-center gap-2">
