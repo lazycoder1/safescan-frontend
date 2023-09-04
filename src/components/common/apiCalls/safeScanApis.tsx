@@ -130,15 +130,15 @@ const sendSafeApiGetRequest = async (network: string, endpoint: string) => {
     }
 };
 
-export const getLatestMultiSigTransactions = async () => {
+export const getLatestMultiSigTransactions = async (network: string) => {
     const query = LATEST_MULTI_SIG_TRANSACTIONS;
-    const data = await sendGraphPostRequest('polygon', query);
+    const data = await sendGraphPostRequest(network, query);
     return data.safeMultiSigTransactions;
 };
 
-export const getLatestModuleTransactions = async () => {
+export const getLatestModuleTransactions = async (network: string) => {
     const query = LATEST_MODULE_TRANSACTIONS;
-    const data = await sendGraphPostRequest('polygon', query);
+    const data = await sendGraphPostRequest(network, query);
     return data.safeModuleTransactions;
 };
 

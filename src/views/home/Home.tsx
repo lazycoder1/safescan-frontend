@@ -50,7 +50,8 @@ function Home() {
     }, [selectedNetwork]);
 
     const refreshSafeMultiSigTransactions = async (network: string) => {
-        const latestMultiSigTransactions = await getLatestMultiSigTransactions();
+        if (!network) return;
+        const latestMultiSigTransactions = await getLatestMultiSigTransactions(network);
         let newRow = [] as tableDataT['rows'];
         latestMultiSigTransactions.forEach((tx: MultiSigTransaction) => {
             newRow.push({
@@ -71,7 +72,8 @@ function Home() {
     };
 
     const refreshSafeModuleTransactions = async (network: string) => {
-        const latestModuleTransactions = await getLatestModuleTransactions();
+        if (!network) return;
+        const latestModuleTransactions = await getLatestModuleTransactions(network);
         let newRow = [] as tableDataT['rows'];
         latestModuleTransactions.forEach((tx: moduleTransaction) => {
             newRow.push({

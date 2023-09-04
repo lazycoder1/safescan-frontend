@@ -285,16 +285,16 @@ function Account(props: any) {
 
     // fetch erc 20 balances
     const loadAccountBalances = async (name: string, network: string) => {
-        const tokenBalances = await getAddressBalances(name, "polygon", DEFAULT_PAGE_SIZE, pageNo, toast);
+        const tokenBalances = await getAddressBalances(name, network, DEFAULT_PAGE_SIZE, pageNo, toast);
         setTokenBalances(tokenBalances);
     };
 
     const loadAccountModuleTransactions = async (name: string, network: string) => {
-        const moduleTransactionsResponse = await getSafeModuleTransactions(name, "polygon", DEFAULT_PAGE_SIZE, pageNo, toast);
+        const moduleTransactionsResponse = await getSafeModuleTransactions(name, network, DEFAULT_PAGE_SIZE, pageNo, toast);
         const count = moduleTransactionsResponse.count;
         
         const moduleTransactions = moduleTransactionsResponse.results;
-        const moduleTransactionsTableRows = createModuleTransactionTableRows(moduleTransactions.slice(0, pageSize * (pageNo + 1)), "polygon");
+        const moduleTransactionsTableRows = createModuleTransactionTableRows(moduleTransactions.slice(0, pageSize * (pageNo + 1)), network);
         console.log("module Transactions - "+moduleTransactions);
         
         setModuleTxnCount(count)
@@ -304,10 +304,10 @@ function Account(props: any) {
 
     const loadAccountMultiSigTransactions = async (name: string, network: string) => {
         setTableLoading(true);
-        const multiSigTransactionsResponse = await getSafeMultiSigTransactions(name, "polygon", DEFAULT_PAGE_SIZE, pageNo, toast);
+        const multiSigTransactionsResponse = await getSafeMultiSigTransactions(name, network, DEFAULT_PAGE_SIZE, pageNo, toast);
         const count = multiSigTransactionsResponse.count;
         const multiSigTransactions = multiSigTransactionsResponse.results;
-        const multiSigTransactionsTableRows = createMultiSigTransactionTableRows(multiSigTransactions.slice(0, pageSize * (pageNo + 1)), "polygon");
+        const multiSigTransactionsTableRows = createMultiSigTransactionTableRows(multiSigTransactions.slice(0, pageSize * (pageNo + 1)), network);
         
         setMultiSigTxnCount(count);
         setMultiSigTransactions(multiSigTransactions);
@@ -334,7 +334,7 @@ function Account(props: any) {
     // load the account details.
     const loadAccountDetails = async (name: string, network: string) => {
         setTableLoading(true);
-        const safe = await getSafeAddress(name, "polygon");
+        const safe = await getSafeAddress(name, network);
         if (safe) {
             setAddressInfo(safe);
         }
