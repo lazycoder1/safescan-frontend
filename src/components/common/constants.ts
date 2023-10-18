@@ -17,6 +17,12 @@ export const NETWORK_LIST = [
         iconPath: '/images/arbitrum-logo.svg',
         iconPathInverted: '/images/arbitrum-logo.svg',
     },
+    {
+        name: 'Optimism',
+        key: 'optimism',
+        iconPath: '/images/icon-container (6).svg',
+        iconPathInverted: '/images/icon-container (6).svg',
+    },
 ];
 
 export const PAGE_SIZE_LIST: number[] = [10, 25, 50, 100];
