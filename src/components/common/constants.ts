@@ -23,6 +23,30 @@ export const NETWORK_LIST = [
         iconPath: '/images/icon-container (6).svg',
         iconPathInverted: '/images/icon-container (6).svg',
     },
+    {
+        name: 'Polygon ZK EVM',
+        key: "polygon-zkevm",
+        iconPath: '/images/polygon-icon.svg',
+        iconPathInverted: '/images/polygon-icon.svg',
+    },
+    {
+        name: 'Binance Smart Chain',
+        key: "bsc",
+        iconPath: '/images/bsc-logo.svg',
+        iconPathInverted: '/images/bsc-logo.svg',
+    },
+    {
+        name: 'Avalanche',
+        key: 'avalanche',
+        iconPath: '/images/avalanche-logo-red.svg',
+        iconPathInverted: '/images/avalanche-logo-red.svg',
+    },
+    {
+        name: 'Goerli',
+        key: 'goerli',
+        iconPath: '/images/eth-diamond-purple.svg',
+        iconPathInverted: '/images/eth-diamond-purple.svg',
+    }
 ];
 
 export const PAGE_SIZE_LIST: number[] = [10, 25, 50, 100];

@@ -14,14 +14,22 @@ const SAFE_BASE_URL: { [key: string]: string } = {
     polygon: 'https://safe-transaction-polygon.safe.global/api',
     mainnet: 'https://safe-transaction-mainnet.safe.global/api',
     "arbitrum-one": 'https://safe-transaction-arbitrum.safe.global/api',
-    "optimism": 'https://safe-transaction-optimism.safe.global/api'
+    "optimism": 'https://safe-transaction-optimism.safe.global/api',
+    "avalanche": 'https://safe-transaction-avalanche.safe.global/api',
+    "bsc": 'https://safe-transaction-bsc.safe.global/api',
+    "goerli": 'https://safe-transaction-goerli.safe.global/api',
+    "polygon-zkevm": 'https://safe-transaction-zkevm.safe.global/api',
 };
 
 const GRAPH_URL: { [key: string]: string } = {
     polygon: 'https://api.thegraph.com/subgraphs/name/lazycoder1/subgraph-safe-matic',
     mainnet: 'https://api.thegraph.com/subgraphs/name/lazycoder1/subgraph-safe-mainnet',
     "arbitrum-one": 'https://api.thegraph.com/subgraphs/name/lazycoder1/subgraph-safe-arbitrum',
-    optimism: 'https://api.thegraph.com/subgraphs/name/lazycoder1/subgraph-safe-optimism'
+    optimism: 'https://api.thegraph.com/subgraphs/name/lazycoder1/subgraph-safe-optimism',
+    goerli: 'https://api.studio.thegraph.com/query/57506/goerli-safe-scan/version/latest',
+    avalanche: 'https://api.studio.thegraph.com/query/57506/avalanche/version/latest',
+    'polygon-zkevm': 'https://api.studio.thegraph.com/query/57506/polygon-zk-safe-scan/version/latest',
+    'bsc': 'https://api.thegraph.com/subgraphs/name/lazycoder1/binance-safe-scan'
 };
 
 export interface MultiSigTransaction {
